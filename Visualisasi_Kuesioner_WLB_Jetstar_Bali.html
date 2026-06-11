@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visualisasi Hasil Kuesioner WLB - Jetstar Bali Based</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --navy:#1f3a5f;
+    --blue:#3b6ea5;
+    --teal:#3fa7a0;
+    --orange:#e8985e;
+    --red:#d9695f;
+    --bg:#f4f6f9;
+    --card:#ffffff;
+    --text:#2b3340;
+    --muted:#6b7785;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+  header{
+    background:linear-gradient(135deg, var(--navy), var(--blue));
+    color:#fff;
+    padding:32px 24px;
+    text-align:center;
+  }
+  header h1{margin:0 0 6px 0; font-size:24px; font-weight:700;}
+  header p{margin:0; font-size:14px; opacity:0.9;}
+  .container{max-width:1100px; margin:0 auto; padding:24px 16px 60px;}
+
+  .kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(170px,1fr));
+    gap:14px;
+    margin:-28px 0 28px 0;
+  }
+  .kpi{
+    background:var(--card);
+    border-radius:12px;
+    padding:18px 16px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.06);
+    text-align:center;
+  }
+  .kpi .value{font-size:28px; font-weight:800; color:var(--navy);}
+  .kpi .label{font-size:12.5px; color:var(--muted); margin-top:4px; line-height:1.4;}
+  .kpi.warn .value{color:var(--red);}
+  .kpi.good .value{color:var(--teal);}
+
+  .section{
+    background:var(--card);
+    border-radius:14px;
+    padding:22px 24px;
+    margin-bottom:22px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
+  }
+  .section h2{
+    margin:0 0 4px 0;
+    font-size:18px;
+    color:var(--navy);
+    border-left:5px solid var(--teal);
+    padding-left:10px;
+  }
+  .section .sub{
+    margin:6px 0 18px 12px;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .note{
+    background:#fff7ec;
+    border:1px solid #f0d9b5;
+    border-radius:10px;
+    padding:12px 16px;
+    font-size:13px;
+    color:#7a5c2e;
+    margin-bottom:20px;
+  }
+
+  .demo-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+    gap:18px;
+  }
+  .demo-card{text-align:center;}
+  .demo-card h3{font-size:13px; color:var(--muted); margin:0 0 8px 0; font-weight:600;}
+  .chart-wrap{position:relative; height:200px;}
+  .chart-wrap.tall{height:320px;}
+  .chart-wrap.wide{height:280px;}
+  .chart-wrap.bar-tall{height:380px;}
+
+  .dim-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(420px,1fr));
+    gap:24px;
+  }
+  .dim-card h3{
+    font-size:14px;
+    margin:0 0 10px 0;
+    color:var(--navy);
+  }
+
+  .theme-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+    gap:14px;
+  }
+  .theme{
+    border:1px solid #e5e9ef;
+    border-radius:10px;
+    padding:14px 16px;
+    background:#fbfcfe;
+  }
+  .theme h4{margin:0 0 6px 0; font-size:13.5px; color:var(--navy);}
+  .theme p{margin:0; font-size:12.5px; color:var(--text); line-height:1.5;}
+
+  footer{
+    text-align:center;
+    font-size:12px;
+    color:var(--muted);
+    padding:10px 16px 30px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Hasil Kuesioner Work-Life Balance</h1>
+  <p>Flight Attendant Jetstar Airways &mdash; Bali Based (n = 7 responden)</p>
+</header>
+
+<div class="container">
+
+  <div class="kpi-grid">
+    <div class="kpi good">
+      <div class="value">4.14</div>
+      <div class="label">Penilaian WLB Keseluruhan (skala 1&ndash;5)</div>
+    </div>
+    <div class="kpi good">
+      <div class="value">4.43</div>
+      <div class="label">Mampu "melepaskan diri" dari pikiran kerja saat libur</div>
+    </div>
+    <div class="kpi warn">
+      <div class="value">4.00</div>
+      <div class="label">Sering merasa burnout</div>
+    </div>
+    <div class="kpi warn">
+      <div class="value">4.00</div>
+      <div class="label">Jadwal mengganggu kualitas tidur</div>
+    </div>
+    <div class="kpi warn">
+      <div class="value">2.71</div>
+      <div class="label">Dukungan kesehatan mental dari perusahaan (skor terendah)</div>
+    </div>
+  </div>
+
+  <div class="note">
+    Catatan metodologi: data berasal dari 7 responden (5 Milenial, 1 Generasi Z, 1 tidak menyebutkan).
+    Visualisasi ini bersifat <b>eksploratif/ilustratif</b> &mdash; melengkapi kajian literatur pada BAB III,
+    bukan generalisasi statistik. Perbandingan antar-generasi khususnya perlu dibaca dengan hati-hati
+    karena hanya ada 1 responden Gen Z.
+  </div>
+
+  <div class="section">
+    <h2>Profil Responden</h2>
+    <div class="sub">Karakteristik demografis dari 7 responden</div>
+    <div class="demo-grid">
+      <div class="demo-card">
+        <h3>Generasi</h3>
+        <div class="chart-wrap"><canvas id="chartGen"></canvas></div>
+      </div>
+      <div class="demo-card">
+        <h3>Jenis Kelamin</h3>
+        <div class="chart-wrap"><canvas id="chartGender"></canvas></div>
+      </div>
+      <div class="demo-card">
+        <h3>Asal Domisili</h3>
+        <div class="chart-wrap"><canvas id="chartOrigin"></canvas></div>
+      </div>
+      <div class="demo-card">
+        <h3>Lama Bekerja di Jetstar</h3>
+        <div class="chart-wrap"><canvas id="chartTenure"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Skor Rata-rata per Dimensi WLB</h2>
+    <div class="sub">
+      Skala 1 (sangat tidak setuju) &ndash; 5 (sangat setuju). Tanda (&minus;) berarti pernyataan negatif:
+      skor tinggi = tantangan lebih besar bagi WLB.
+    </div>
+    <div class="dim-grid" id="dimGrid"></div>
+  </div>
+
+  <div class="section">
+    <h2>Perbandingan Milenial vs Generasi Z</h2>
+    <div class="sub">Skor Milenial = rata-rata 5 responden &middot; Skor Gen Z = 1 responden (ilustratif, bukan statistik)</div>
+    <div class="chart-wrap bar-tall"><canvas id="chartComp"></canvas></div>
+  </div>
+
+  <div class="section">
+    <h2>Tema Utama dari Jawaban Terbuka</h2>
+    <div class="theme-grid">
+      <div class="theme">
+        <h4>Strategi Coping Stres</h4>
+        <p>Istirahat/tidur cukup, olahraga (renang, pilates), waktu bersama keluarga &amp; teman,
+        self-reward, dan menjaga aktivitas di luar dunia penerbangan.</p>
+      </div>
+      <div class="theme">
+        <h4>Dukungan Kesehatan Mental</h4>
+        <p>Support system keluarga &amp; rekan kerja sangat penting; responden ingin "didengarkan
+        tanpa judgmental"; satu responden mengusulkan perubahan sistem dari perusahaan.</p>
+      </div>
+      <div class="theme">
+        <h4>Hubungan Keluarga &amp; Sosial</h4>
+        <p>Jadwal tak menentu menyulitkan kehadiran di acara penting. Satu responden Gen Z justru
+        memaknai jarak secara positif &mdash; lebih menghargai keluarga lewat komunikasi digital.</p>
+      </div>
+      <div class="theme">
+        <h4>Motivasi Bertahan</h4>
+        <p>Penghasilan &amp; stabilitas kontrak, gaya hidup (travelling, tiket murah), rasa syukur,
+        kecintaan pada rutinitas dinamis, dan kecocokan pribadi dengan profesi.</p>
+      </div>
+      <div class="theme">
+        <h4>Kesehatan Fisik</h4>
+        <p>Pola makan bergizi, olahraga, vitamin, pijat/bekam saat day-off &mdash; namun keluhan
+        sulit tidur &amp; migrain berulang juga muncul.</p>
+      </div>
+      <div class="theme">
+        <h4>Batas Digital</h4>
+        <p>Mute/arsipkan grup WhatsApp kerja, hanya respon saat jam kerja. Aplikasi roster digital
+        dinilai cukup membantu, meski kadang memicu kecemasan saat roster baru terbit.</p>
+      </div>
+      <div class="theme">
+        <h4>Tantangan Terbesar (Bali Based)</h4>
+        <p>Jet lag terus-menerus, minimum rest dirasa kurang, long trip, dan bagi yang berasal dari
+        luar Bali &mdash; bolak-balik ke kampung halaman saat day-off sehingga tidak fully rested.</p>
+      </div>
+      <div class="theme">
+        <h4>Gen Z vs Milenial</h4>
+        <p>Persepsi beragam: sebagian menilai tidak ada perbedaan signifikan (lebih ke karakter
+        individu), sebagian menilai Gen Z lebih vokal &amp; easy going, Milenial lebih "nerimo"
+        namun rentan over-doing.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Data primer: Kuesioner WLB Flight Attendant Jetstar Airways Bali (n=7) &middot; Disusun untuk melengkapi BAB III &mdash; Secondary Data Research
+</footer>
+
+<script>
+const palette = ['#3b6ea5','#3fa7a0','#e8985e','#d9695f','#8c6fb0','#5fb27a','#c9a13b'];
+
+function donut(id, labels, data){
+  new Chart(document.getElementById(id), {
+    type:'doughnut',
+    data:{ labels:labels, datasets:[{ data:data, backgroundColor:palette, borderWidth:2, borderColor:'#fff' }] },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{ font:{size:11}, boxWidth:12 } } }
+    }
+  });
+}
+
+donut('chartGen', ['Milenial','Generasi Z','Tidak menyebutkan'], [5,1,1]);
+donut('chartGender', ['Perempuan','Laki-laki'], [6,1]);
+donut('chartOrigin', ['Luar Bali','Dari Bali'], [5,2]);
+donut('chartTenure', ['1–3 tahun','>6 tahun'], [6,1]);
+
+// Dimension bar charts
+const dimItems = {
+  "1. Time Balance & Fleksibilitas Roster": [
+    {q:8, text:"Roster cukup utk rencana pribadi", dir:"+", mean:3.57},
+    {q:9, text:"Puas dgn fleksibilitas jadwal shift", dir:"+", mean:3.29},
+    {q:10, text:"Sering korbankan rencana akibat roster mendadak (−)", dir:"-", mean:3.71},
+    {q:11, text:"Kendali memadai atas hari libur", dir:"+", mean:3.86},
+    {q:12, text:"Jam terbang tdk teratur ganggu rutinitas (−)", dir:"-", mean:4.14},
+  ],
+  "2. Tekanan Psikologis & Dukungan Mental": [
+    {q:14, text:"Stres kerja terasa berat (−)", dir:"-", mean:3.00},
+    {q:15, text:"Terkuras emosional setelah terbang (−)", dir:"-", mean:3.57},
+    {q:16, text:"Dukungan kesehatan mental memadai", dir:"+", mean:2.71},
+    {q:17, text:"Mampu lepas dari pikiran kerja saat libur", dir:"+", mean:4.43},
+    {q:18, text:"Penumpang sulit ganggu kesejahteraan mental (−)", dir:"-", mean:3.57},
+  ],
+  "3. Kehidupan Keluarga & Sosial": [
+    {q:21, text:"Waktu berkualitas dgn keluarga cukup", dir:"+", mean:3.29},
+    {q:22, text:"Jadwal sulitkan hadiri acara penting (−)", dir:"-", mean:3.71},
+    {q:23, text:"Merasa bersalah lewatkan komitmen keluarga (−)", dir:"-", mean:2.86},
+    {q:24, text:"Tinggal di Bali sulitkan hub. personal (−)", dir:"-", mean:2.86},
+    {q:25, text:"Puas dgn waktu pribadi di luar kerja", dir:"+", mean:3.43},
+  ],
+  "4. Kepuasan Kerja & Karier": [
+    {q:27, text:"Bangga & puas jadi pramugari/a", dir:"+", mean:4.29},
+    {q:28, text:"Sering merasa burnout (−)", dir:"-", mean:4.00},
+    {q:29, text:"Jalur karier jelas di Jetstar", dir:"+", mean:3.43},
+    {q:30, text:"Pertimbangkan ganti profesi (−)", dir:"-", mean:2.86},
+    {q:31, text:"Gaji & tunjangan sebanding tuntutan", dir:"+", mean:3.43},
+  ],
+  "5. Kesehatan Fisik": [
+    {q:33, text:"Jadwal ganggu kualitas tidur (−)", dir:"-", mean:4.00},
+    {q:34, text:"Kelelahan fisik pengaruhi kehidupan pribadi (−)", dir:"-", mean:3.43},
+    {q:35, text:"Cukup waktu jaga gaya hidup sehat", dir:"+", mean:3.00},
+    {q:36, text:"Jet lag/shift panjang ganggu aktivitas (−)", dir:"-", mean:3.57},
+    {q:37, text:"Kondisi fisik tetap baik meski jadwal tdk teratur", dir:"+", mean:3.57},
+  ],
+  "6. Batas Digital & Teknologi": [
+    {q:39, text:"Terima pesan kerja di luar jam kerja (−)", dir:"-", mean:3.71},
+    {q:40, text:"Wajib respon pesan kerja saat libur (−)", dir:"-", mean:1.43},
+    {q:41, text:"Notifikasi kerja sulitkan lepas saat libur (−)", dir:"-", mean:2.14},
+    {q:42, text:"Nyaman tetapkan batas digital dgn atasan", dir:"+", mean:4.29},
+    {q:43, text:"Aplikasi roster tingkatkan WLB", dir:"+", mean:3.43},
+  ],
+  "7. Ekspektasi & Nilai terhadap WLB": [
+    {q:45, text:"Perusahaan harus hormati batas kerja-pribadi", dir:"+", mean:4.57},
+    {q:46, text:"Prioritaskan kepuasan pribadi vs karier", dir:"+", mean:4.00},
+    {q:47, text:"Nyaman sampaikan kekhawatiran WLB ke atasan", dir:"+", mean:3.29},
+    {q:48, text:"Pertimbangkan keluar jika WLB tdk membaik 2th (−)", dir:"-", mean:3.29},
+  ],
+};
+
+const dimGrid = document.getElementById('dimGrid');
+let chartIdx = 0;
+for (const [title, items] of Object.entries(dimItems)) {
+  const card = document.createElement('div');
+  card.className = 'dim-card';
+  const canvasId = 'dimChart' + (chartIdx++);
+  card.innerHTML = `<h3>${title}</h3><div class="chart-wrap wide"><canvas id="${canvasId}"></canvas></div>`;
+  dimGrid.appendChild(card);
+
+  new Chart(document.getElementById(canvasId), {
+    type: 'bar',
+    data: {
+      labels: items.map(i => `Q${i.q}. ${i.text}`),
+      datasets: [{
+        data: items.map(i => i.mean),
+        backgroundColor: items.map(i => i.dir === '+' ? '#3fa7a0' : '#e8985e'),
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { min: 0, max: 5, ticks: { stepSize: 1 } },
+        y: { ticks: { font: { size: 10.5 } } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `Mean: ${ctx.parsed.x.toFixed(2)} / 5 (${ctx.dataset.backgroundColor[ctx.dataIndex] === '#3fa7a0' ? 'positif untuk WLB' : 'negatif/tantangan'})`
+          }
+        }
+      }
+    }
+  });
+}
+
+// Generation comparison chart
+const comp = [
+  {"q":8,"text":"Roster kerja saya memberi saya waktu yang cukup untuk merencanakan kegiatan pribadi.","mil":3.4,"genz":4.0},
+  {"q":11,"text":"Saya merasa memiliki kendali yang memadai atas hari libur saya.","mil":3.6,"genz":5.0},
+  {"q":14,"text":"Pekerjaan saya menyebabkan stres yang terasa berat bagi saya.","mil":3.4,"genz":2.0},
+  {"q":16,"text":"Saya mendapatkan dukungan kesehatan mental yang memadai dari perusahaan.","mil":2.6,"genz":3.0},
+  {"q":17,"text":"Saya mampu 'melepaskan diri' dari pikiran kerja di hari libur.","mil":4.2,"genz":5.0},
+  {"q":21,"text":"Saya memiliki waktu berkualitas yang cukup bersama keluarga atau orang-orang terkasih.","mil":3.0,"genz":5.0},
+  {"q":23,"text":"Saya merasa bersalah karena melewatkan komitmen keluarga atau sosial akibat pekerjaan.","mil":3.0,"genz":1.0},
+  {"q":28,"text":"Saya sering merasa kelelahan (burnout) akibat tanggung jawab pekerjaan.","mil":4.2,"genz":4.0},
+  {"q":30,"text":"Saya telah serius mempertimbangkan untuk beralih ke profesi lain akibat ketidakseimbangan kerja-kehidupan.","mil":3.2,"genz":1.0},
+  {"q":33,"text":"Jadwal kerja yang tidak teratur sangat mengganggu kualitas tidur saya.","mil":4.2,"genz":3.0},
+  {"q":40,"text":"Saya merasa wajib merespons pesan kerja selama hari libur saya.","mil":1.6,"genz":1.0},
+  {"q":45,"text":"Saya percaya perusahaan harus menghormati batasan yang jelas antara waktu kerja dan waktu pribadi.","mil":4.6,"genz":5.0},
+  {"q":46,"text":"Saya memprioritaskan kepuasan dan keseimbangan hidup pribadi di atas kemajuan karier.","mil":3.8,"genz":5.0},
+  {"q":48,"text":"Saya akan mempertimbangkan untuk meninggalkan profesi ini jika work-life balance tidak membaik dalam 2 tahun ke depan.","mil":3.6,"genz":1.0},
+  {"q":50,"text":"Bagaimana Anda menilai keseimbangan kerja-kehidupan pribadi Anda secara keseluruhan?","mil":4.0,"genz":5.0}
+];
+
+new Chart(document.getElementById('chartComp'), {
+  type: 'bar',
+  data: {
+    labels: comp.map(c => `Q${c.q}. ${c.text.length > 55 ? c.text.slice(0,55)+'…' : c.text}`),
+    datasets: [
+      { label: 'Milenial (n=5, rata-rata)', data: comp.map(c => c.mil), backgroundColor: '#3b6ea5', borderRadius: 3 },
+      { label: 'Generasi Z (n=1)', data: comp.map(c => c.genz), backgroundColor: '#e8985e', borderRadius: 3 },
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: { min: 0, max: 5, ticks: { stepSize: 1 } },
+      y: { ticks: { font: { size: 10.5 } } }
+    },
+    plugins: {
+      legend: { position: 'top' }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
